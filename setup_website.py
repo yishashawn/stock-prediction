@@ -105,8 +105,7 @@ def main():
     print("\n网站地址:")
     print("  https://yishashawn.github.io/stock-prediction/")
     print("=" * 60)
-    
-    input("\n按回车键退出...")
+    print("\n✓ 配置完成！请在打开的页面中完成最后一步。")
 
 if __name__ == "__main__":
     main()
