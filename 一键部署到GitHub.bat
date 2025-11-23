@@ -1,77 +1,84 @@
 @echo off
 chcp 65001 >nul
-title 一键部署到GitHub Pages
-color 0A
+title GitHub Pages 一键部署
+color 0B
 
 echo.
-echo ========================================
-echo 一键部署到GitHub Pages
-echo ========================================
+echo ╔══════════════════════════════════════════════════════════╗
+echo ║        GitHub Pages 一键部署工具                        ║
+echo ╚══════════════════════════════════════════════════════════╝
 echo.
 
-REM 添加Git到PATH
-set "PATH=%PATH%;C:\Program Files\Git\bin;C:\Program Files\Git\cmd"
+REM 检查Python
+set PYTHON_EXE=
+if exist "C:\Users\syy\Python313\python.exe" (
+    set PYTHON_EXE=C:\Users\syy\Python313\python.exe
+    goto :found_python
+)
 
-echo [步骤1] 检查Git...
-where git >nul 2>&1
-if %errorLevel% neq 0 (
-    echo [错误] Git未在PATH中
-    echo 请先运行: 添加Git到PATH.bat（以管理员身份运行）
+where python >nul 2>&1
+if not errorlevel 1 (
+    set PYTHON_EXE=python
+    goto :found_python
+)
+
+where py >nul 2>&1
+if not errorlevel 1 (
+    set PYTHON_EXE=py
+    goto :found_python
+)
+
+:found_python
+if "%PYTHON_EXE%"=="" (
+    echo [错误] 未找到Python
+    echo 请先安装Python或运行: 运行预测模型.bat
     pause
     exit /b 1
 )
 
-git --version
-echo [OK] Git可用
-echo.
-
-echo [步骤2] 检查文件...
+REM 检查HTML文件
 if not exist "中际旭创_价格预测.html" (
-    echo [警告] 未找到HTML文件
+    echo [错误] 未找到HTML文件
     echo 请先运行: 运行预测模型.bat
     pause
     exit /b 1
 )
-echo [OK] HTML文件存在
-echo.
 
-echo ========================================
-echo 部署前准备
-echo ========================================
-echo.
-echo 请确保已完成:
-echo   1. ✓ 创建GitHub Personal Access Token
-echo      访问: https://github.com/settings/tokens
-echo      创建新Token，权限选择 'repo'
-echo.
-echo   2. ✓ 创建GitHub仓库
-echo      访问: https://github.com/new
-echo      创建Public仓库，复制仓库URL
-echo.
-echo ========================================
-echo.
-
-set /p ready="是否已完成上述准备? (y/n): "
-if /i not "%ready%"=="y" (
+echo [步骤1] 检查Git安装...
+where git >nul 2>&1
+if errorlevel 1 (
+    echo [错误] Git未安装
     echo.
-    echo 请先完成准备工作:
-    echo   1. 查看: 创建GitHub_Token指南.md
-    echo   2. 创建Token和仓库后，再次运行此脚本
+    echo 请先安装Git:
+    echo 1. 运行: 安装Git_简化版.bat
+    echo 2. 或访问: https://git-scm.com/download/win
     echo.
     pause
-    exit /b 0
+    exit /b 1
+)
+
+git --version >nul 2>&1
+if errorlevel 1 (
+    echo [错误] Git未正确安装
+    pause
+    exit /b 1
+)
+
+echo [OK] Git已安装
+echo.
+
+echo [步骤2] 运行部署脚本...
+echo.
+"%PYTHON_EXE%" 部署到GitHub_Pages.py
+if errorlevel 1 (
+    echo.
+    echo [错误] 部署失败
+    pause
+    exit /b 1
 )
 
 echo.
-echo [步骤3] 运行部署脚本...
-echo.
-
-if exist "C:\Users\syy\Python313\python.exe" (
-    "C:\Users\syy\Python313\python.exe" "部署到GitHub_Pages.py"
-) else (
-    python "部署到GitHub_Pages.py"
-)
-
-echo.
+echo ═══════════════════════════════════════════════════════════
+echo 部署完成！
+echo ═══════════════════════════════════════════════════════════
 pause
-

@@ -5,35 +5,35 @@
       "predicted_pct": -6.448731969547194,
       "predicted_close": 434.08723878810406,
       "base_close": 464.01,
-      "prediction_date": "2025-11-23 21:22:07"
+      "prediction_date": "2025-11-23 21:33:14"
     },
     "2025-11-25": {
       "day_offset": 2,
       "predicted_pct": -8.298659766733952,
       "predicted_close": 398.0638157502693,
       "base_close": 434.08723878810406,
-      "prediction_date": "2025-11-23 21:22:07"
+      "prediction_date": "2025-11-23 21:33:14"
     },
     "2025-11-26": {
       "day_offset": 3,
       "predicted_pct": -11.510603570277391,
       "predicted_close": 352.2442679625364,
       "base_close": 398.0638157502693,
-      "prediction_date": "2025-11-23 21:22:07"
+      "prediction_date": "2025-11-23 21:33:14"
     },
     "2025-11-27": {
       "day_offset": 4,
       "predicted_pct": -14.929999458625582,
       "predicted_close": 299.6542006626901,
       "base_close": 352.2442679625364,
-      "prediction_date": "2025-11-23 21:22:07"
+      "prediction_date": "2025-11-23 21:33:14"
     },
     "2025-11-28": {
       "day_offset": 5,
       "predicted_pct": -18.584551883172445,
       "predicted_close": 243.96481027042674,
       "base_close": 299.6542006626901,
-      "prediction_date": "2025-11-23 21:22:07"
+      "prediction_date": "2025-11-23 21:33:14"
     },
     "2025-12-01": {
       "predicted_pct": 0.5717035367860603,

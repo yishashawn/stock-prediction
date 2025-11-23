@@ -111,9 +111,12 @@ def add_files():
         '中际旭创_价格预测模型.png',
         '中际旭创_多因素散点图.png',
         '中际旭创_特征重要性详细分析.png',
-        '中际旭创_所有因素散点图_第1页.png',
-        'README.md'
+        'index.html'
     ]
+    
+    # 查找所有散点图文件（可能有多个页面）
+    scatter_plot_files = [f for f in os.listdir('.') if f.startswith('中际旭创_所有因素散点图_第') and f.endswith('.png')]
+    files_to_add.extend(scatter_plot_files)
     
     # 检查文件是否存在
     existing_files = []
@@ -139,13 +142,30 @@ def add_files():
         print(f"  ✓ {f}")
     
     try:
-        # 添加文件
-        subprocess.run(['git', 'add'] + existing_files, check=True, timeout=10)
+        # 配置Git以正确处理中文文件名
+        subprocess.run(['git', 'config', '--global', 'core.quotepath', 'false'], 
+                      capture_output=True, timeout=5)
+        subprocess.run(['git', 'config', '--global', 'i18n.commitencoding', 'utf-8'], 
+                      capture_output=True, timeout=5)
+        
+        # 使用Python的subprocess处理中文文件名，逐个添加文件
+        for file in existing_files:
+            try:
+                # 使用绝对路径确保文件能被找到
+                abs_path = os.path.abspath(file)
+                subprocess.run(['git', 'add', abs_path], check=True, timeout=10, 
+                             encoding='utf-8', errors='ignore')
+            except subprocess.CalledProcessError as e:
+                print(f"  警告: 添加文件失败 {file}: {e}")
+                # 尝试使用相对路径
+                try:
+                    subprocess.run(['git', 'add', file], check=True, timeout=10,
+                                 encoding='utf-8', errors='ignore')
+                except:
+                    print(f"  ✗ 无法添加: {file}")
+        
         print("\n✓ 文件已添加到Git暂存区")
         return True
-    except subprocess.CalledProcessError:
-        print("✗ 添加文件失败")
-        return False
     except Exception as e:
         print(f"✗ 错误: {e}")
         return False
@@ -330,12 +350,21 @@ def main():
     print("GitHub Pages 自动部署工具")
     print("=" * 60)
     
+    # 配置Git以正确处理中文
+    try:
+        subprocess.run(['git', 'config', '--global', 'core.quotepath', 'false'], 
+                      capture_output=True, timeout=5)
+        subprocess.run(['git', 'config', '--global', 'i18n.commitencoding', 'utf-8'], 
+                      capture_output=True, timeout=5)
+    except:
+        pass  # 如果配置失败，继续执行
+    
     # 检查Git
     if not check_git_installed():
         print("\n✗ Git未安装")
         print("\n请先安装Git:")
-        print("1. 访问: https://git-scm.com/download/win")
-        print("2. 下载并安装Git for Windows")
+        print("1. 运行: 安装Git_简化版.bat")
+        print("2. 或访问: https://git-scm.com/download/win")
         print("3. 安装完成后重新运行此脚本")
         input("\n按回车键退出...")
         return
@@ -343,7 +372,7 @@ def main():
     # 检查是否在项目目录
     if not os.path.exists('中际旭创_价格预测.html'):
         print("\n✗ 找不到 中际旭创_价格预测.html")
-        print("请确保在项目目录中运行此脚本")
+        print("请先运行: 运行预测模型.bat 生成HTML文件")
         input("\n按回车键退出...")
         return
     
@@ -376,13 +405,17 @@ def main():
         print("\n" + "=" * 60)
         print("请提供GitHub仓库URL")
         print("=" * 60)
+        print("\n⚠️ 重要: 请先创建GitHub仓库！")
+        print("\n步骤:")
+        print("1. 访问: https://github.com/new")
+        print("2. 仓库名称: stock-prediction（或任意名称）")
+        print("3. 选择: Public（公开，才能使用免费GitHub Pages）")
+        print("4. 点击: Create repository（绿色按钮）")
+        print("5. 复制仓库URL（页面会显示）")
         print("\n格式示例:")
-        print("  HTTPS: https://github.com/用户名/仓库名.git")
-        print("  SSH:   git@github.com:用户名/仓库名.git")
-        print("\n如果没有仓库，请先:")
-        print("1. 访问 https://github.com/new")
-        print("2. 创建新仓库（选择Public）")
-        print("3. 复制仓库URL")
+        print("  HTTPS: https://github.com/您的用户名/stock-prediction.git")
+        print("  SSH:   git@github.com:您的用户名/stock-prediction.git")
+        print("\n⚠️ 如果仓库不存在，推送会失败！")
         print("=" * 60)
         remote_url = input("\n请输入GitHub仓库URL: ").strip()
         
@@ -390,8 +423,17 @@ def main():
             print("已取消")
             return
         
+        # 清理URL（移除末尾的斜杠）
+        remote_url = remote_url.rstrip('/')
+        
         if not remote_url.startswith('http') and not remote_url.startswith('git@'):
             print("✗ URL格式不正确")
+            print("  正确格式: https://github.com/用户名/仓库名.git")
+            return
+        
+        # 验证仓库URL格式
+        if 'github.com' not in remote_url:
+            print("✗ URL必须包含 github.com")
             return
     
     # 设置远程仓库
@@ -403,9 +445,33 @@ def main():
         return
     
     # 提交
+    print("\n" + "=" * 60)
+    print("提交更改")
+    print("=" * 60)
+    print("\n提示: 提交信息是描述本次更新的文字，例如:")
+    print("  - '更新预测数据'")
+    print("  - '首次部署'")
+    print("  - '更新模型和图表'")
+    print("\n⚠️ 注意: 这里输入的是提交信息，不是Token！")
+    print("Token会在后面推送时使用。")
+    print("=" * 60)
     commit_msg = input("\n请输入提交信息（直接回车使用默认）: ").strip()
     if not commit_msg:
         commit_msg = "更新中际旭创股票价格预测数据"
+    
+    # 检查是否误输入了Token（Token通常以ghp_开头）
+    if commit_msg.startswith('ghp_') or len(commit_msg) > 50:
+        print("\n⚠️ 警告: 您可能输入了Token而不是提交信息！")
+        print("Token格式: ghp_xxxxxxxxxxxxx（很长的一串字符）")
+        print("提交信息应该是简短的文字描述，例如: '更新预测数据'")
+        choice = input("\n是否重新输入提交信息? (y/n): ").strip().lower()
+        if choice == 'y':
+            commit_msg = input("请输入提交信息: ").strip()
+            if not commit_msg:
+                commit_msg = "更新中际旭创股票价格预测数据"
+        else:
+            print("使用默认提交信息")
+            commit_msg = "更新中际旭创股票价格预测数据"
     
     if not commit_changes(commit_msg):
         return

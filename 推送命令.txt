@@ -1,0 +1,31 @@
+推送命令（复制到PowerShell运行）
+========================================
+
+# 方法1: 直接推送（会提示输入凭据）
+$env:Path += ";C:\Program Files\Git\bin;C:\Program Files\Git\cmd"
+cd C:\Users\syy\Tushare
+git push origin main
+
+# 当提示输入时:
+# Username: 435256553@qq.com
+# Password: 粘贴您的Personal Access Token
+
+========================================
+
+# 方法2: 使用URL中包含Token（临时，不推荐）
+# 注意: 这会暴露Token，推送后建议撤销Token并创建新的
+
+git remote set-url origin https://您的Token@github.com/yishashawn/zhongji.git
+git push origin main
+
+# 推送完成后，恢复URL:
+git remote set-url origin https://github.com/yishashawn/zhongji.git
+
+========================================
+
+# 方法3: 使用Git凭据管理器（推荐）
+# 第一次推送时会弹出窗口，输入Token后会自动保存
+
+git config --global credential.helper manager-core
+git push origin main
+
