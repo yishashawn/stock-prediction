@@ -405,17 +405,13 @@ def main():
         print("\n" + "=" * 60)
         print("请提供GitHub仓库URL")
         print("=" * 60)
-        print("\n⚠️ 重要: 请先创建GitHub仓库！")
-        print("\n步骤:")
-        print("1. 访问: https://github.com/new")
-        print("2. 仓库名称: stock-prediction（或任意名称）")
-        print("3. 选择: Public（公开，才能使用免费GitHub Pages）")
-        print("4. 点击: Create repository（绿色按钮）")
-        print("5. 复制仓库URL（页面会显示）")
         print("\n格式示例:")
-        print("  HTTPS: https://github.com/您的用户名/stock-prediction.git")
-        print("  SSH:   git@github.com:您的用户名/stock-prediction.git")
-        print("\n⚠️ 如果仓库不存在，推送会失败！")
+        print("  HTTPS: https://github.com/用户名/仓库名.git")
+        print("  SSH:   git@github.com:用户名/仓库名.git")
+        print("\n如果没有仓库，请先:")
+        print("1. 访问 https://github.com/new")
+        print("2. 创建新仓库（选择Public）")
+        print("3. 复制仓库URL")
         print("=" * 60)
         remote_url = input("\n请输入GitHub仓库URL: ").strip()
         
@@ -423,17 +419,8 @@ def main():
             print("已取消")
             return
         
-        # 清理URL（移除末尾的斜杠）
-        remote_url = remote_url.rstrip('/')
-        
         if not remote_url.startswith('http') and not remote_url.startswith('git@'):
             print("✗ URL格式不正确")
-            print("  正确格式: https://github.com/用户名/仓库名.git")
-            return
-        
-        # 验证仓库URL格式
-        if 'github.com' not in remote_url:
-            print("✗ URL必须包含 github.com")
             return
     
     # 设置远程仓库
@@ -445,33 +432,9 @@ def main():
         return
     
     # 提交
-    print("\n" + "=" * 60)
-    print("提交更改")
-    print("=" * 60)
-    print("\n提示: 提交信息是描述本次更新的文字，例如:")
-    print("  - '更新预测数据'")
-    print("  - '首次部署'")
-    print("  - '更新模型和图表'")
-    print("\n⚠️ 注意: 这里输入的是提交信息，不是Token！")
-    print("Token会在后面推送时使用。")
-    print("=" * 60)
     commit_msg = input("\n请输入提交信息（直接回车使用默认）: ").strip()
     if not commit_msg:
         commit_msg = "更新中际旭创股票价格预测数据"
-    
-    # 检查是否误输入了Token（Token通常以ghp_开头）
-    if commit_msg.startswith('ghp_') or len(commit_msg) > 50:
-        print("\n⚠️ 警告: 您可能输入了Token而不是提交信息！")
-        print("Token格式: ghp_xxxxxxxxxxxxx（很长的一串字符）")
-        print("提交信息应该是简短的文字描述，例如: '更新预测数据'")
-        choice = input("\n是否重新输入提交信息? (y/n): ").strip().lower()
-        if choice == 'y':
-            commit_msg = input("请输入提交信息: ").strip()
-            if not commit_msg:
-                commit_msg = "更新中际旭创股票价格预测数据"
-        else:
-            print("使用默认提交信息")
-            commit_msg = "更新中际旭创股票价格预测数据"
     
     if not commit_changes(commit_msg):
         return

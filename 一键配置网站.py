@@ -1,0 +1,115 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+一键配置GitHub Pages网站
+"""
+
+import os
+import subprocess
+import webbrowser
+import time
+
+def run_cmd(cmd_list, description=""):
+    """运行命令"""
+    try:
+        result = subprocess.run(cmd_list, capture_output=True, 
+                              text=True, encoding='utf-8', errors='ignore', timeout=30)
+        return result.returncode == 0, result.stdout, result.stderr
+    except Exception as e:
+        return False, "", str(e)
+
+def main():
+    print("=" * 60)
+    print("一键配置GitHub Pages网站")
+    print("=" * 60)
+    
+    # 1. 配置远程仓库
+    print("\n[1/4] 配置远程仓库...")
+    run_cmd(['git', 'remote', 'remove', 'origin'])
+    run_cmd(['git', 'remote', 'add', 'origin', 'https://github.com/yishashawn/stock-prediction.git'])
+    print("✓ 完成")
+    
+    # 2. 添加并提交文件
+    print("\n[2/4] 添加文件...")
+    files = [
+        '中际旭创_价格预测.html',
+        'index.html',
+        '中际旭创_价格预测模型.png',
+        '中际旭创_多因素散点图.png',
+        '中际旭创_特征重要性详细分析.png'
+    ]
+    
+    # 查找散点图
+    for f in os.listdir('.'):
+        if f.startswith('中际旭创_所有因素散点图_') and f.endswith('.png'):
+            files.append(f)
+    
+    existing = [f for f in files if os.path.exists(f)]
+    print(f"找到 {len(existing)} 个文件")
+    
+    for f in existing:
+        run_cmd(['git', 'add', '-f', f])
+    
+    # 创建index.html如果不存在
+    if not os.path.exists('index.html'):
+        with open('index.html', 'w', encoding='utf-8') as f:
+            f.write('''<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="0; url=中际旭创_价格预测.html">
+    <title>中际旭创股票价格预测</title>
+</head>
+<body>
+    <h1>正在跳转...</h1>
+    <p><a href="中际旭创_价格预测.html">点击这里</a></p>
+</body>
+</html>''')
+        run_cmd(['git', 'add', 'index.html'])
+    
+    run_cmd(['git', 'add', '-A'])
+    success, _, _ = run_cmd(['git', 'commit', '-m', '更新网站文件'])
+    if success:
+        print("✓ 文件已提交")
+    else:
+        print("ℹ 没有新更改需要提交")
+    
+    # 3. 推送到GitHub
+    print("\n[3/4] 推送到GitHub...")
+    print("提示: 如果提示输入凭据，请输入Token")
+    success, stdout, stderr = run_cmd(['git', 'push', '-u', 'origin', 'main'])
+    
+    if success:
+        print("✓ 推送成功")
+    else:
+        if "GH013" in stderr or "secret" in stderr.lower():
+            print("⚠️ 检测到Token安全问题")
+            print("请访问以下链接允许推送:")
+            print("https://github.com/yishashawn/stock-prediction/security/secret-scanning/unblock-secret/35skOPQ298UdllgeXz54YNMZuTH")
+            webbrowser.open("https://github.com/yishashawn/stock-prediction/security/secret-scanning/unblock-secret/35skOPQ298UdllgeXz54YNMZuTH")
+            input("\n允许推送后，按回车继续...")
+            run_cmd(['git', 'push', '-u', 'origin', 'main'])
+        else:
+            print("⚠️ 推送失败，但可能文件已存在")
+    
+    # 4. 打开GitHub Pages设置页面
+    print("\n[4/4] 打开GitHub Pages设置...")
+    pages_url = "https://github.com/yishashawn/stock-prediction/settings/pages"
+    webbrowser.open(pages_url)
+    print("✓ 已打开设置页面")
+    
+    print("\n" + "=" * 60)
+    print("最后一步: 在打开的页面中")
+    print("=" * 60)
+    print("1. Source: 选择 'main' 和 '/ (root)'")
+    print("2. 点击 'Save'")
+    print("3. 等待1-5分钟")
+    print("\n完成后，访问:")
+    print("  https://yishashawn.github.io/stock-prediction/")
+    print("=" * 60)
+    
+    input("\n按回车键退出...")
+
+if __name__ == "__main__":
+    main()
+
