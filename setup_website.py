@@ -77,10 +77,19 @@ def main():
         print("⚠️ 需要允许Token推送")
         print("正在打开GitHub页面...")
         webbrowser.open("https://github.com/yishashawn/stock-prediction/security/secret-scanning/unblock-secret/35skOPQ298UdllgeXz54YNMZuTH")
-        input("允许推送后，按回车继续...")
-        run_cmd(['git', 'push', '-u', 'origin', 'main'])
-    
-    print("✓ 推送完成")
+        print("\n请在打开的页面中点击允许，然后等待5秒...")
+        import time
+        time.sleep(5)
+        print("重试推送...")
+        success, _, _ = run_cmd(['git', 'push', '-u', 'origin', 'main'])
+        if success:
+            print("✓ 推送成功")
+        else:
+            print("⚠️ 推送可能仍需手动处理，但继续配置Pages...")
+    elif success:
+        print("✓ 推送成功")
+    else:
+        print("⚠️ 推送可能失败，但继续配置Pages...")
     
     # 4. 打开Pages设置
     print("\n[4/4] 打开GitHub Pages设置...")
