@@ -94,7 +94,7 @@ echo.
 echo ⚠️ 重要提示:
 echo - 当提示输入用户名: 输入 435256553@qq.com
 echo - 当提示输入密码: 粘贴您的Token（不是GitHub密码）
-echo - Token: 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
+echo - Token: [您的Personal Access Token]
 echo.
 pause
 

@@ -42,7 +42,7 @@ echo ═════════════════════════
 echo.
 echo 当提示输入凭据时:
 echo   用户名: 435256553@qq.com
-echo   密码: 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
+echo   密码: [您的Personal Access Token]
 echo.
 echo 注意: 密码处输入的是Token，不是GitHub密码！
 echo ═══════════════════════════════════════════════════════════

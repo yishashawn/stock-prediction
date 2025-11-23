@@ -55,7 +55,7 @@ def main():
     print("提示: 如果仓库不存在，会显示错误")
     print("如果提示输入凭据，请输入:")
     print("  用户名: 435256553@qq.com")
-    print("  密码: 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")
+    print("  密码: [您的Personal Access Token]")
     print()
     
     # 配置Git
@@ -103,7 +103,7 @@ def main():
     print("\n⚠️ 重要提示:")
     print("当提示输入凭据时:")
     print("  用户名: 435256553@qq.com")
-    print("  密码: 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（粘贴Token）")
+    print("  密码: [您的Personal Access Token]（粘贴Token）")
     print("\n注意: 密码处输入的是Token，不是GitHub密码！")
     print("=" * 60)
     
